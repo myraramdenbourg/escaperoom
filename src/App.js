@@ -17,24 +17,31 @@ import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import React, { useState, useEffect } from 'react';
+import { Container } from "@material-ui/core";
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 
-function App() {
+
+
+export default function App() {
   var i = 1;
-  const [open, setOpen] = React.useState(false);
   const [data, setData] = useState([]);
-  Tabletop.init({
-    key: "1Acxw1YY7zxW2_zcTXGkAi0TSQmhRAV126ZJ1Vi-eij4",
-    callback: (googleData) => {
-      setData(
-        googleData,
-      );
-    },
-    simpleSheet: true,
-  });
+
+  function init() {
+    Tabletop.init({
+      key: "1Acxw1YY7zxW2_zcTXGkAi0TSQmhRAV126ZJ1Vi-eij4",
+      callback: (googleData) => {
+        setData(
+          googleData,
+        );
+      },
+      simpleSheet: true,
+    });
+  }
+  window.addEventListener('DOMContentLoaded', init)
+
   data.sort(compareValues("OverallRanking", "desc"));
   console.log("------>", data);
-
 
   return (
     <div className="App" >
@@ -59,58 +66,74 @@ function App() {
               <th scope="col" > Room Name </th>
               <th scope="col" > Region </th>
             </tr>
-          </thead> {
-
-            data.map(data => (
-
-              <tbody>
-                <tr >
-                  <td>
-                    <IconButton
-                      aria-label="expand row"
-                      size="small"
-                      onClick={() => setOpen(!open)}
-
-                    >
-                      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                  </td>
-                  <th scope="row">
-                    {i++}
-                  </th>
-                  <td> {data.OverallRanking} </td>
-                  <td> {data.CompanyName} </td>
-                  <td> {data.RoomName} </td>
-                  <td> {data.Region} </td>
-                </tr>
-                <tr>
-                  <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                      <Box margin={1}>
-                        <Typography variant="h6" gutterBottom component="div">
-                          Details
-            </Typography>
-                        <h5> Set design: {data.SetDesignRanking} </h5>
-                        <h5> Puzzles: {data.PuzzlesRanking} </h5>
-                        <h5> Storyline: {data.StorylineRanking} </h5>
-                        <h5> Game master: {data.GMRanking} </h5>
-                        <h5> Overall: {data.OverallRanking} </h5>
-                        <h5> Review: {data.Comments} </h5>
-                        <h5> Picture: {data.Picture} </h5>
-                      </Box>
-                    </Collapse>
-                  </td>
-                </tr>
-              </tbody>
-
-            ))
-          } </table>
-      }
+          </thead>
+          {data.map(row => (
+            <Row key={row.id} row={row} />
+          ))
+          }
+        </table>}
       </div>
     </div>
   );
 
 
+  function Row(props) {
+    const rank = i;
+    i++;
+    const { row } = props;
+    const [open, setOpen] = React.useState(false);
+    console.log("open", open);
+    return (
+      <React.Fragment>
+        <tr >
+          <td>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+
+            </IconButton>
+          </td>
+          <th scope="row">
+            {rank}
+          </th>
+          <td> {row.OverallRanking} </td>
+          <td> {row.CompanyName} </td>
+          <td> {row.RoomName} </td>
+          <td> {row.Region} </td>
+        </tr>
+        <tr>
+          <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Details
+                </Typography>
+                <Container>
+                  <h5> Set design: {row.SetDesignRanking} </h5>
+                  <h5> Puzzles: {row.PuzzlesRanking} </h5>
+                  <h5> Storyline: {row.StorylineRanking} </h5>
+                  <h5> Game master: {row.GMRanking} </h5>
+                  <h5> Overall: {row.OverallRanking} </h5>
+                  <h5> Review: {row.Comments} </h5>
+                  <h5> Picture: {row.Picture} </h5>
+                  <div>
+                    <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={"Set Design"} />
+                    <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={"Puzzles"} />
+                    <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={"Storyline"} />
+                    {/* <ProgressBar variant="danger" now={row.SetDesignRanking * 10} /> */}
+                  </div>
+
+                </Container>
+              </Box>
+            </Collapse>
+          </td>
+        </tr>
+      </React.Fragment>
+    );
+  }
 }
 
 function compareValues(key, order = "asc") {
@@ -132,4 +155,3 @@ function compareValues(key, order = "asc") {
   };
 }
 
-export default App;
