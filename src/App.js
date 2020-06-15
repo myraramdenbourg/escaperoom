@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+// import React, { Component } from "react";
 import logo from "./owl3.png";
 import "./App.css";
 import Tabletop from "tabletop";
@@ -16,124 +16,101 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import React, { useState, useEffect } from 'react';
 
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      open: false,
-    };
-  }
+function App() {
+  var i = 1;
+  const [open, setOpen] = React.useState(false);
+  const [data, setData] = useState([]);
+  Tabletop.init({
+    key: "1Acxw1YY7zxW2_zcTXGkAi0TSQmhRAV126ZJ1Vi-eij4",
+    callback: (googleData) => {
+      setData(
+        googleData,
+      );
+    },
+    simpleSheet: true,
+  });
+  data.sort(compareValues("OverallRanking", "desc"));
+  console.log("------>", data);
 
-  handleOpen() {
-    if (this.state.open == true) {
-      this.setState((state) => {
-        return { open: false };
-      });
-      return false;
-    }
-    this.setState((state) => {
-      return { open: true };
-    });
-    return true;
-  }
-  row() {
-    var i = 1;
-    const { data } = this.state.data;
 
-    console.log("this is my data", this.state.data);
-    return (
-      this.state.data.map(data => (
-        <div>
-          <tbody>
-            <tr>
-              <td>
-                <IconButton
-                  aria-label="expand row"
-                  size="small"
-                  onClick={() => this.handleOpen()}
-                >
-                  {this.state.open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                </IconButton>
-              </td>
-              <th scope="row">
-                {i++}
-              </th>
-              <td align="right">{data.RoomName}</td>
-              <td align="right">{data.Medium}</td>
-              <td align="right">{data.Region}</td>
-              <td align="right">{data.SetDesignRanking}</td>
+  return (
+    <div className="App" >
+      <nav class="navbar navbar-light bg-light" >
+        <span class="navbar-brand mb-0 h1" > Escape Room Rankings </span>
+      </nav>
+      <header className="App-header" >
+        <img src={logo}
+          width="100%"
+          alt="logo" />
+        <h1 className="App-title" > Escape Room Rankings </h1>
+      </header>
+
+      <div id="room-rankings" > {
+        <table class="table table-striped table-dark" >
+          <thead >
+            <tr >
+              <th scope="col" > </th>
+              <th scope="col" > # </th>
+              <th scope="col" > Ranking out of 10 </th>
+              <th scope="col" > Company Name </th>
+              <th scope="col" > Room Name </th>
+              <th scope="col" > Region </th>
             </tr>
-            <tr>
-              <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-                  <Box margin={1}>
-                    <Typography variant="h6" gutterBottom component="div">
-                      Details
-                </Typography>
-                    <h5> Set design: 9/10 </h5>
-                  </Box>
-                </Collapse>
-              </td>
-            </tr>
-          </tbody>
-        </div>
-      ))
-    );
-  }
-  componentDidMount() {
+          </thead> {
 
-    Tabletop.init({
-      key: "1Acxw1YY7zxW2_zcTXGkAi0TSQmhRAV126ZJ1Vi-eij4",
-      callback: (googleData) => {
-        this.setState({
-          data: googleData,
-        });
-      },
-      simpleSheet: true,
-    });
-  }
+            data.map(data => (
 
-  render() {
+              <tbody>
+                <tr >
+                  <td>
+                    <IconButton
+                      aria-label="expand row"
+                      size="small"
+                      onClick={() => setOpen(!open)}
 
-    this.state.data.sort(compareValues("OverallRanking", "desc"));
-    console.log("updated state --->", this.state);
-    return (
-      <div className="App" >
-        <nav class="navbar navbar-light bg-light" >
-          <span class="navbar-brand mb-0 h1" > Escape Room Rankings </span>
-        </nav>
-        <header className="App-header" >
-          <img src={logo}
-            width="100%"
-            alt="logo" />
-          <h1 className="App-title" > Escape Room Rankings </h1>
-        </header>
+                    >
+                      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                  </td>
+                  <th scope="row">
+                    {i++}
+                  </th>
+                  <td> {data.OverallRanking} </td>
+                  <td> {data.CompanyName} </td>
+                  <td> {data.RoomName} </td>
+                  <td> {data.Region} </td>
+                </tr>
+                <tr>
+                  <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                      <Box margin={1}>
+                        <Typography variant="h6" gutterBottom component="div">
+                          Details
+            </Typography>
+                        <h5> Set design: {data.SetDesignRanking} </h5>
+                        <h5> Puzzles: {data.PuzzlesRanking} </h5>
+                        <h5> Storyline: {data.StorylineRanking} </h5>
+                        <h5> Game master: {data.GMRanking} </h5>
+                        <h5> Overall: {data.OverallRanking} </h5>
+                        <h5> Review: {data.Comments} </h5>
+                        <h5> Picture: {data.Picture} </h5>
+                      </Box>
+                    </Collapse>
+                  </td>
+                </tr>
+              </tbody>
 
-        <div id="room-rankings" > {
-          <table class="table table-striped table-dark" >
-            <thead >
-              <tr >
-                <th scope="col" > # </th>
-                <th scope="col" > Ranking out of 10 </th>
-                <th scope="col" > Company Name </th>
-                <th scope="col" > Room Name </th>
-                <th scope="col" > Region </th>
-              </tr>
-            </thead> {
-
-              <div>
-                {this.row()}
-              </div>
-
-            } </table>
-        }
-        </div>
+            ))
+          } </table>
+      }
       </div>
-    );
-  }
+    </div>
+  );
+
+
 }
 
 function compareValues(key, order = "asc") {
@@ -154,12 +131,5 @@ function compareValues(key, order = "asc") {
     return order === "desc" ? comparison * -1 : comparison;
   };
 }
-
-function Example() {
-  // Declare a new state variable, which we'll call "count"
-  const [open, setOpen] = React.useState(false);
-  setOpen(!open);
-}
-
 
 export default App;
