@@ -19,13 +19,70 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       data: [],
+      open: false,
     };
   }
 
+  handleOpen() {
+    if (this.state.open == true) {
+      this.setState((state) => {
+        return { open: false };
+      });
+      return false;
+    }
+    this.setState((state) => {
+      return { open: true };
+    });
+    return true;
+  }
+  row() {
+    var i = 1;
+    const { data } = this.state.data;
+
+    console.log("this is my data", this.state.data);
+    return (
+      this.state.data.map(data => (
+        <div>
+          <tbody>
+            <tr>
+              <td>
+                <IconButton
+                  aria-label="expand row"
+                  size="small"
+                  onClick={() => this.handleOpen()}
+                >
+                  {this.state.open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+              </td>
+              <th scope="row">
+                {i++}
+              </th>
+              <td align="right">{data.RoomName}</td>
+              <td align="right">{data.Medium}</td>
+              <td align="right">{data.Region}</td>
+              <td align="right">{data.SetDesignRanking}</td>
+            </tr>
+            <tr>
+              <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+                  <Box margin={1}>
+                    <Typography variant="h6" gutterBottom component="div">
+                      Details
+                </Typography>
+                    <h5> Set design: 9/10 </h5>
+                  </Box>
+                </Collapse>
+              </td>
+            </tr>
+          </tbody>
+        </div>
+      ))
+    );
+  }
   componentDidMount() {
 
     Tabletop.init({
@@ -40,9 +97,8 @@ class App extends Component {
   }
 
   render() {
-    const { data } = this.state;
-    var i = 1;
-    data.sort(compareValues("OverallRanking", "desc"));
+
+    this.state.data.sort(compareValues("OverallRanking", "desc"));
     console.log("updated state --->", this.state);
     return (
       <div className="App" >
@@ -67,18 +123,11 @@ class App extends Component {
                 <th scope="col" > Region </th>
               </tr>
             </thead> {
-              data.map((room) => {
-                return (
-                  <tbody>
-                    <tr>
-                      <th scope="row" > {i++}</th>
-                      <td> {room.OverallRanking} </td>
-                      <td> {room.CompanyName} </td>
-                      <td> {room.RoomName} </td>
-                      <td> {room.Region} </td>
-                    </tr> </tbody>
-                );
-              })
+
+              <div>
+                {this.row()}
+              </div>
+
             } </table>
         }
         </div>
@@ -106,67 +155,11 @@ function compareValues(key, order = "asc") {
   };
 }
 
-function CollapsibleTable(rows) {
-  return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(row => (
-            <Row key={row.name} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [open, setOpen] = React.useState(false);
+  setOpen(!open);
 }
 
-function Row(props) {
-  const { data } = props;
-  const [open, setOpen] = React.useState(false);
-  return (
-    <React.Fragment>
-      <TableRow>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {data.companyName}
-        </TableCell>
-        <TableCell align="right">{data.roomName}</TableCell>
-        <TableCell align="right">{data.medium}</TableCell>
-        <TableCell align="right">{data.region}</TableCell>
-        <TableCell align="right">{data.setDesignRanking}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">
-                Details
-              </Typography>
-              <h5> Set design: 9/10 </h5>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}
 
 export default App;
