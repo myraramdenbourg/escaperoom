@@ -7,16 +7,14 @@ import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container } from "@material-ui/core";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Image from 'react-bootstrap/Image';
 import "./index.css";
-import Col from 'react-bootstrap/Col'
 
 
 export default function App() {
-  var i = 1;
   const [data, setData] = useState([]);
 
   function init() {
@@ -37,8 +35,8 @@ export default function App() {
 
   return (
     <div className="App" >
-      <nav class="navbar navbar-light bg-light" >
-        <span class="navbar-brand mb-0 h1" > Escape Room Rankings </span>
+      <nav className="navbar navbar-light bg-light" >
+        <span className="navbar-brand mb-0 h1" > Escape Room Rankings </span>
       </nav>
       <header className="App-header" >
         <img src={logo}
@@ -48,7 +46,7 @@ export default function App() {
       </header>
 
       <div id="room-rankings" > {
-        <table class="table table-striped table-dark" >
+        <table className="table table-striped table-dark" >
           <thead >
             <tr >
               <th scope="col" > </th>
@@ -60,7 +58,7 @@ export default function App() {
             </tr>
           </thead>
           {data.map((row) => (
-            <Row key={row.id} row={row} />
+            <Row key={row.ID} row={row} />
           ))
           }
         </table>}
@@ -71,64 +69,66 @@ export default function App() {
 
 
   function Row(props) {
-
-    const rank = i;
-    i++;
     const { row } = props;
+    const rank = data.indexOf(row) + 1;
     const [open, setOpen] = React.useState(false);
     return (
       <React.Fragment>
-        <tr >
-          <td>
-            <IconButton
-              id="icon"
-              aria-label="expand row"
-              size="small"
-              color="inherit"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </td>
-          <th scope="row">
-            {rank}
-          </th>
-          <td> {row.OverallRanking} </td>
-          <td> {row.CompanyName} </td>
-          <td> {row.RoomName} </td>
-          <td> {row.Region} </td>
-        </tr>
-        <tr>
-          <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box margin={2}>
-                <Container>
-                  <tr >
-                    <th scope="col" >
-                      <div  >
-                        <h5> Review: {row.Comments} </h5>
-                        <h1>  -------</h1>
-                        <div >
-                          <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={'Set Design: ' + row.SetDesignRanking + '/10'} />
-                          <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={'Puzzles: ' + row.PuzzlesRanking + '/10'} />
-                          <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={'Storyline: ' + row.StorylineRanking + '/10'} />
-                          <h6> Game master rating: {row.GMRanking} </h6>
-                          <h5 > Overall: {row.OverallRanking} </h5>
+        <tbody>
+          <tr >
+            <td>
+              <IconButton
+                id="icon"
+                aria-label="expand row"
+                size="small"
+                color="inherit"
+                onClick={() => setOpen(!open)}
+              >
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </td>
+            <th scope="row">
+              {rank}
+            </th>
+            <td> {row.OverallRanking} </td>
+            <td> {row.CompanyName} </td>
+            <td> {row.RoomName} </td>
+            <td> {row.Region} </td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box margin={2}>
+                  <Container>
+                    <tr >
+                      <th scope="col" >
+                        <div  >
+                          <h5> Review: {row.Comments} </h5>
+                          <h1>  -------</h1>
+                          <div >
+                            <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={'Set Design: ' + row.SetDesignRanking + '/10'} />
+                            <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={'Puzzles: ' + row.PuzzlesRanking + '/10'} />
+                            <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={'Storyline: ' + row.StorylineRanking + '/10'} />
+                            <h6> Game master rating: {row.GMRanking} </h6>
+                            <h5 > Overall: {row.OverallRanking} </h5>
+                          </div>
                         </div>
-                      </div>
-                    </th>
-                    <th scope="col" >
-                      <div>
-                        <h5> <Image style={{ float: 'right' }} width={500} src={row.Picture} alt="" rounded /> </h5>
-                      </div>
-                    </th>
-                  </tr>
+                      </th>
+                      <th scope="col" >
+                        <div>
+                          <h5> <Image style={{ float: 'right' }} width={500} src={row.Picture} alt="" rounded /> </h5>
+                        </div>
+                      </th>
+                    </tr>
 
-                </Container>
-              </Box>
-            </Collapse>
-          </td>
-        </tr>
+                  </Container>
+                </Box>
+              </Collapse>
+            </td>
+          </tr>
+        </tbody>
       </React.Fragment>
     );
   }
