@@ -2,25 +2,17 @@
 import logo from "./owl3.png";
 import "./App.css";
 import Tabletop from "tabletop";
-import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import React, { useState, useEffect } from 'react';
 import { Container } from "@material-ui/core";
 import ProgressBar from 'react-bootstrap/ProgressBar';
-
-
+import Image from 'react-bootstrap/Image';
+import "./index.css";
+import Col from 'react-bootstrap/Col'
 
 
 export default function App() {
@@ -67,7 +59,7 @@ export default function App() {
               <th scope="col" > Region </th>
             </tr>
           </thead>
-          {data.map(row => (
+          {data.map((row) => (
             <Row key={row.id} row={row} />
           ))
           }
@@ -77,23 +69,25 @@ export default function App() {
   );
 
 
+
   function Row(props) {
+
     const rank = i;
     i++;
     const { row } = props;
     const [open, setOpen] = React.useState(false);
-    console.log("open", open);
     return (
       <React.Fragment>
         <tr >
           <td>
             <IconButton
+              id="icon"
               aria-label="expand row"
               size="small"
+              color="inherit"
               onClick={() => setOpen(!open)}
             >
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-
             </IconButton>
           </td>
           <th scope="row">
@@ -107,24 +101,28 @@ export default function App() {
         <tr>
           <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box margin={1}>
-                <Typography variant="h6" gutterBottom component="div">
-                  Details
-                </Typography>
+              <Box margin={2}>
                 <Container>
-                  <h5> Set design: {row.SetDesignRanking} </h5>
-                  <h5> Puzzles: {row.PuzzlesRanking} </h5>
-                  <h5> Storyline: {row.StorylineRanking} </h5>
-                  <h5> Game master: {row.GMRanking} </h5>
-                  <h5> Overall: {row.OverallRanking} </h5>
-                  <h5> Review: {row.Comments} </h5>
-                  <h5> Picture: {row.Picture} </h5>
-                  <div>
-                    <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={"Set Design"} />
-                    <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={"Puzzles"} />
-                    <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={"Storyline"} />
-                    {/* <ProgressBar variant="danger" now={row.SetDesignRanking * 10} /> */}
-                  </div>
+                  <tr >
+                    <th scope="col" >
+                      <div  >
+                        <h5> Review: {row.Comments} </h5>
+                        <h1>  -------</h1>
+                        <div >
+                          <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={'Set Design: ' + row.SetDesignRanking + '/10'} />
+                          <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={'Puzzles: ' + row.PuzzlesRanking + '/10'} />
+                          <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={'Storyline: ' + row.StorylineRanking + '/10'} />
+                          <h6> Game master rating: {row.GMRanking} </h6>
+                          <h5 > Overall: {row.OverallRanking} </h5>
+                        </div>
+                      </div>
+                    </th>
+                    <th scope="col" >
+                      <div>
+                        <h5> <Image style={{ float: 'right' }} width={500} src={row.Picture} alt="" rounded /> </h5>
+                      </div>
+                    </th>
+                  </tr>
 
                 </Container>
               </Box>
