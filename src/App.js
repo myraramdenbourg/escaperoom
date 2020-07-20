@@ -1,4 +1,3 @@
-// import React, { Component } from "react";
 import logo from "./owl3.png";
 import "./App.css";
 import Tabletop from "tabletop";
@@ -12,7 +11,6 @@ import { Container } from "@material-ui/core";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Image from 'react-bootstrap/Image';
 import "./index.css";
-
 
 export default function App() {
   const [data, setData] = useState([]);
@@ -100,7 +98,7 @@ export default function App() {
           <tr>
             <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
               <Collapse in={open} timeout="auto" unmountOnExit>
-                <Box margin={2}>
+                <Box margin={2} width='auto'>
                   <Container>
                     <tr >
                       <th scope="col" >
@@ -118,7 +116,7 @@ export default function App() {
                       </th>
                       <th scope="col" >
                         <div>
-                          <h5> <Image style={{ float: 'right' }} width={500} src={row.Picture} alt="" rounded /> </h5>
+                          <h5> <Image style={{ float: 'right' }} width='500' src={row.Picture} alt="" rounded /> </h5>
                         </div>
                       </th>
                     </tr>
