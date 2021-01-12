@@ -10,10 +10,14 @@ import React, { useState } from 'react';
 import { Container } from "@material-ui/core";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Image from 'react-bootstrap/Image';
+import Tabs from 'react-bootstrap/Tabs'
+import Tab from 'react-bootstrap/Tab'
 import "./index.css";
 
 export default function App() {
-  const [data, setData] = useState([]);
+  var [data, setData] = useState([]);
+  var [online, setOnline] = useState([]);
+  var [tableTop, setTableTop] = useState([]);
 
   function init() {
     Tabletop.init({
@@ -22,14 +26,31 @@ export default function App() {
         setData(
           googleData,
         );
+        setOnline(
+          googleData,
+        );
+        setTableTop(
+          googleData,
+        );
       },
       simpleSheet: true,
     });
   }
   window.addEventListener('DOMContentLoaded', init)
 
-  data.sort(compareValues("OverallRanking", "desc"));
-  console.log("------>", data);
+  data = data.filter(index => {
+    return index.Medium === "in-person";
+  }).sort(compareValues("OverallRanking", "desc"));
+
+  online = online.filter(index => {
+    return index.Medium === "online" || index.Medium === "online with GM";
+  }).sort(compareValues("OverallRanking", "desc"));
+
+  tableTop = tableTop.filter(index => {
+    return index.Medium === "tabletop";
+  }).sort(compareValues("OverallRanking", "desc"));
+
+  console.log(online);
 
   return (
     <div className="App" >
@@ -42,33 +63,75 @@ export default function App() {
           alt="logo" />
         <h1 className="App-title" > Escape Room Rankings </h1>
       </header>
-
-      <div id="room-rankings" > {
-        <table className="table table-striped table-dark" >
-          <thead >
-            <tr >
-              <th scope="col" > </th>
-              <th scope="col" > # </th>
-              <th scope="col" > Ranking out of 10 </th>
-              <th scope="col" > Company Name </th>
-              <th scope="col" > Room Name </th>
-              <th scope="col" > Region </th>
-            </tr>
-          </thead>
-          {data.map((row) => (
-            <Row key={row.ID} row={row} />
-          ))
-          }
-        </table>}
-      </div>
+      <Tabs defaultActiveKey="inperson" id="uncontrolled-tab-example">
+        <Tab eventKey="inperson" title="In Person">
+          <div id="room-rankings" > {
+            <table className="table table-striped table-dark" >
+              <thead >
+                <tr >
+                  <th scope="col" > </th>
+                  <th scope="col" > # </th>
+                  <th scope="col" > Ranking out of 10 </th>
+                  <th scope="col" > Company Name </th>
+                  <th scope="col" > Room Name </th>
+                  <th scope="col" > Region </th>
+                </tr>
+              </thead>
+              {data.map((row) => (
+                <RowInPerson key={row.ID} row={row} />
+              ))
+              }
+            </table>}
+          </div>
+        </Tab>
+        <Tab eventKey="online" title="Online">
+          <div id="room-rankings" > {
+            <table className="table table-striped table-dark" >
+              <thead >
+                <tr >
+                  <th scope="col" > </th>
+                  <th scope="col" > # </th>
+                  <th scope="col" > Ranking out of 10 </th>
+                  <th scope="col" > Company Name </th>
+                  <th scope="col" > Room Name </th>
+                  <th scope="col" > Region </th>
+                </tr>
+              </thead>
+              {online.map((row) => (
+                <RowOnline key={row.ID} row={row} />
+              ))
+              }
+            </table>}
+          </div>
+        </Tab>
+        <Tab eventKey="tabletop" title="Table Top">
+          <div id="room-rankings" > {
+            <table className="table table-striped table-dark" >
+              <thead >
+                <tr >
+                  <th scope="col" > </th>
+                  <th scope="col" > # </th>
+                  <th scope="col" > Ranking out of 10 </th>
+                  <th scope="col" > Company Name </th>
+                  <th scope="col" > Room Name </th>
+                  <th scope="col" > Region </th>
+                </tr>
+              </thead>
+              {tableTop.map((row) => (
+                <RowTableTop key={row.ID} row={row} />
+              ))
+              }
+            </table>}
+          </div>
+        </Tab>
+      </Tabs>
     </div>
   );
 
-
-
-  function Row(props) {
+  function RowInPerson(props) {
     const { row } = props;
-    const rank = data.indexOf(row) + 1;
+    var rank = data.indexOf(row) + 1;
+    console.log(rank);
     const [open, setOpen] = React.useState(false);
     return (
       <React.Fragment>
@@ -120,7 +183,6 @@ export default function App() {
                         </div>
                       </th>
                     </tr>
-
                   </Container>
                 </Box>
               </Collapse>
@@ -130,24 +192,153 @@ export default function App() {
       </React.Fragment>
     );
   }
+
+  function RowOnline(props) {
+    const { row } = props;
+    var rank = online.indexOf(row) + 1;
+    const [open, setOpen] = React.useState(false);
+    return (
+      <React.Fragment>
+        <tbody>
+          <tr >
+            <td>
+              <IconButton
+                id="icon"
+                aria-label="expand row"
+                size="small"
+                color="inherit"
+                onClick={() => setOpen(!open)}
+              >
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </td>
+            <th scope="row">
+              {rank}
+            </th>
+            <td> {row.OverallRanking} </td>
+            <td> {row.CompanyName} </td>
+            <td> {row.RoomName} </td>
+            <td> {row.Region} </td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box margin={2} width='auto'>
+                  <Container>
+                    <tr >
+                      <th scope="col" >
+                        <div  >
+                          <h5> Review: {row.Comments} </h5>
+                          <h1>  -------</h1>
+                          <div >
+                            <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={'Set Design/Platform: ' + row.SetDesignRanking + '/10'} />
+                            <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={'Puzzles: ' + row.PuzzlesRanking + '/10'} />
+                            <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={'Storyline: ' + row.StorylineRanking + '/10'} />
+                            <h6> Game master rating: {row.GMRanking} </h6>
+                            <h5 > Overall: {row.OverallRanking} </h5>
+                          </div>
+                        </div>
+                      </th>
+                      <th scope="col" >
+                        <div>
+                          <h5> <Image style={{ float: 'right' }} width='500' src={row.Picture} alt="" rounded /> </h5>
+                        </div>
+                      </th>
+                    </tr>
+                  </Container>
+                </Box>
+              </Collapse>
+            </td>
+          </tr>
+        </tbody>
+      </React.Fragment>
+    );
+  }
+
+  function RowTableTop(props) {
+    const { row } = props;
+    var rank = tableTop.indexOf(row) + 1;
+    console.log(rank);
+    const [open, setOpen] = React.useState(false);
+    return (
+      <React.Fragment>
+        <tbody>
+          <tr >
+            <td>
+              <IconButton
+                id="icon"
+                aria-label="expand row"
+                size="small"
+                color="inherit"
+                onClick={() => setOpen(!open)}
+              >
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </td>
+            <th scope="row">
+              {rank}
+            </th>
+            <td> {row.OverallRanking} </td>
+            <td> {row.CompanyName} </td>
+            <td> {row.RoomName} </td>
+            <td> {row.Region} </td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box margin={2} width='auto'>
+                  <Container>
+                    <tr >
+                      <th scope="col" >
+                        <div  >
+                          <h5> Review: {row.Comments} </h5>
+                          <h1>  -------</h1>
+                          <div >
+                            {/* <ProgressBar variant="success" now={row.SetDesignRanking * 10} label={'Set Design: ' + row.SetDesignRanking + '/10'} /> */}
+                            <ProgressBar variant="info" now={row.PuzzlesRanking * 10} label={'Puzzles: ' + row.PuzzlesRanking + '/10'} />
+                            <ProgressBar variant="warning" now={row.StorylineRanking * 10} label={'Storyline: ' + row.StorylineRanking + '/10'} />
+                            <h6> Game master rating: {row.GMRanking} </h6>
+                            <h5 > Overall: {row.OverallRanking} </h5>
+                          </div>
+                        </div>
+                      </th>
+                      <th scope="col" >
+                        <div>
+                          <h5> <Image style={{ float: 'right' }} width='500' src={row.Picture} alt="" rounded /> </h5>
+                        </div>
+                      </th>
+                    </tr>
+                  </Container>
+                </Box>
+              </Collapse>
+            </td>
+          </tr>
+        </tbody>
+      </React.Fragment>
+    );
+  }
+
+
+  function compareValues(key, order = "asc") {
+    return function innerSort(a, b) {
+      if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+        // property doesn't exist on either object
+        return 0;
+      }
+      const varA = typeof a[key] === "string" ? a[key].toUpperCase() : a[key];
+      const varB = typeof b[key] === "string" ? b[key].toUpperCase() : b[key];
+
+      let comparison = 0;
+      if (varA > varB) {
+        comparison = 1;
+      } else if (varA < varB) {
+        comparison = -1;
+      }
+      return order === "desc" ? comparison * -1 : comparison;
+    };
+  }
 }
-
-function compareValues(key, order = "asc") {
-  return function innerSort(a, b) {
-    if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-      // property doesn't exist on either object
-      return 0;
-    }
-    const varA = typeof a[key] === "string" ? a[key].toUpperCase() : a[key];
-    const varB = typeof b[key] === "string" ? b[key].toUpperCase() : b[key];
-
-    let comparison = 0;
-    if (varA > varB) {
-      comparison = 1;
-    } else if (varA < varB) {
-      comparison = -1;
-    }
-    return order === "desc" ? comparison * -1 : comparison;
-  };
-}
-
