@@ -13,6 +13,7 @@ import Image from 'react-bootstrap/Image';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import "./index.css";
+import Papa from 'papaparse';
 
 export default function App() {
   var [data, setData] = useState([]);
@@ -20,22 +21,26 @@ export default function App() {
   var [tableTop, setTableTop] = useState([]);
 
   function init() {
-    Tabletop.init({
-      key: "1Acxw1YY7zxW2_zcTXGkAi0TSQmhRAV126ZJ1Vi-eij4",
-      callback: (googleData) => {
+    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vR3u6DmOj3bEbwKf2_0EJb5hzzCFP5KxRZp7yZws9Rr5ZQxCQeRpDIHQAx6iuZSsu6mU16JKrTOETig/pub?gid=0&single=true&output=csv', {
+      download: true,
+      header: true,
+      complete: function (results) {
+        var data = results.data
         setData(
-          googleData,
+          data,
         );
         setOnline(
-          googleData,
+          data,
         );
         setTableTop(
-          googleData,
+          data,
         );
+        console.log(data)
       },
-      simpleSheet: true,
-    });
+
+    })
   }
+
   window.addEventListener('DOMContentLoaded', init)
 
   data = data.filter(index => {
@@ -57,12 +62,12 @@ export default function App() {
       <nav className="navbar navbar-light bg-light" >
         <span className="navbar-brand mb-0 h1" > Escape Room Rankings </span>
       </nav>
-      <header className="App-header" >
-        <img src={logo}
-          width="100%"
-          alt="logo" />
-        <h1 className="App-title" > Escape Room Rankings </h1>
-      </header>
+      {/* <header className="App-header" > */}
+      {/* <img src={logo}
+          width="40%"
+          alt="logo" /> */}
+      {/* <h1 className="App-title" > Escape Room Rankings </h1> */}
+      {/* </header> */}
       <Tabs defaultActiveKey="inperson" id="uncontrolled-tab-example">
         <Tab eventKey="inperson" title="In Person">
           <div id="room-rankings" > {
