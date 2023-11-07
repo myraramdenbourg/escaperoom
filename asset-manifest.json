@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/escaperoom/static/css/main.d7cba524.css",
+    "main.js": "/escaperoom/static/js/main.56e2a13d.js",
+    "static/media/owl3.png": "/escaperoom/static/media/owl3.9a6f5e06079928731489.png",
+    "index.html": "/escaperoom/index.html",
+    "main.d7cba524.css.map": "/escaperoom/static/css/main.d7cba524.css.map",
+    "main.56e2a13d.js.map": "/escaperoom/static/js/main.56e2a13d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d7cba524.css",
+    "static/js/main.56e2a13d.js"
+  ]
+}
